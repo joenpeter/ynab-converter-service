@@ -1,0 +1,54 @@
+name: Commit checks
+on:
+  push:
+    
+permissions:
+  contents: write
+  packages: write
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version-file: .java-version
+          cache: 'maven'
+      - name: Run Maven Tests
+        run: mvn clean install
+
+  release:
+    if: github.ref == 'refs/heads/master'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed for creating a new tag and release
+      packages: write # Needed for deploying to GitHub Packages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Required for semantic-release to analyze all commits
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version-file: .java-version
+          server-id: github 
+          settings-path: ${{ github.workspace }}
+        
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Add this line to pass the token
+        with:
+          extra_plugins: |
+            @semantic-release/exec
+            @semantic-release/github
