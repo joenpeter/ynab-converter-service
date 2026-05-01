@@ -23,7 +23,7 @@ public class IntegrationTests {
     ComponentRegister register = container.getRegister();
     assertNotNull(register, "Check component register exists");
   }
-  
+    
   /**
    * Keep for as long as we do not want successful github builds
    */
