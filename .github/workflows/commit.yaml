@@ -8,6 +8,10 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+          contents: read
+          packages: read
+          
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -18,7 +22,6 @@ jobs:
           java-version-file: .java-version
           cache: 'maven'
           server-id: github 
-          settings-path: ${{ github.workspace }}
       - name: Build and test
         run: mvn clean install
         env:
