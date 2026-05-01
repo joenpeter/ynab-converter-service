@@ -8,6 +8,10 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+          contents: read
+          packages: read
+          
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
